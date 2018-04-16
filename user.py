@@ -13,7 +13,7 @@ class User:
     @classmethod
     def find_by_username(cls, username):
 
-        qry = f"SELECT * FROM users WHERE username={username}"
+        qry = f"SELECT * FROM users WHERE username='{username}'"
         user_list = db.Execute(qry)
 
         if len(user_list) > 0:
@@ -26,7 +26,7 @@ class User:
     @classmethod
     def find_by_id(cls, id):
 
-        qry = f"SELECT * FROM users WHERE id={id}"
+        qry = f"SELECT * FROM users WHERE id={int(id)}"
         user_list = db.Execute(qry)
 
         if len(user_list) > 0:
@@ -37,9 +37,10 @@ class User:
         return user
 
 class UserRegister(Resource):
-    def post(self):
+    @staticmethod
+    def post():
         """
-        Method for Create a new User
+        Method for Creating a new User
         :return: new created user notification
         :rtype: dictionary
         """
@@ -48,12 +49,13 @@ class UserRegister(Resource):
         _username = data['username']
         _password = data['password']
 
-        check_exist = f"SELECT * FROM users WHERE username={_username}"
+        check_exist = User.find_by_username(_username)
 
-        if check_exist is not None:
+        if check_exist != None:
             return {"error:": "User Already Exist!"}, 409
         else:
-            insert_qry = f"INSERT INTO users VALUES (NULL, {_username}, {_password})"
+            insert_qry = f"INSERT INTO users VALUES (NULL, '{_username}', '{_password}')"
+            print(insert_qry)
             db.ExecuteNonQuery(insert_qry)
             return {"message:": "User Inserted Successfully!"}
 

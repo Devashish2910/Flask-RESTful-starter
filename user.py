@@ -1,4 +1,6 @@
 from db import DB
+from flask_restful import Resource
+from flask import request
 
 db = DB()
 
@@ -33,4 +35,34 @@ class User:
             user = None
 
         return user
+
+class UserRegister(Resource):
+    def post(self):
+        """
+        Method for Create a new User
+        :return: new created user notification
+        :rtype: dictionary
+        """
+        data = request.get_json()
+
+        _username = data['username']
+        _password = data['password']
+
+        check_exist = f"SELECT * FROM users WHERE username={_username}"
+
+        if check_exist is not None:
+            return {"error:": "User Already Exist!"}, 409
+        else:
+            insert_qry = f"INSERT INTO users VALUES (NULL, {_username}, {_password})"
+            db.ExecuteNonQuery(insert_qry)
+            return {"message:": "User Inserted Successfully!"}
+
+    @staticmethod
+    def get():
+        select_qry = f"SELECT * FROM users"
+        result = db.Execute(select_qry)
+        print(result)
+
+        return {"users:": result}
+
 

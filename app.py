@@ -1,7 +1,9 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
+
 from security import authentication, identity
+from user import UserRegister
 
 
 app = Flask(__name__)
@@ -63,6 +65,7 @@ class Items(Resource):
 
 api.add_resource(Item, '/item', '/item/<string:name>')
 api.add_resource(Items, '/items')
+api.add_resource(UserRegister, '/sign_up', '/all_users')
 
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ class User:
     @classmethod
     def find_by_id(cls, id):
 
-        qry = f"SELECT * FROM users WHERE username={id}"
+        qry = f"SELECT * FROM users WHERE id={id}"
         user_list = db.Execute(qry)
 
         if len(user_list) > 0:

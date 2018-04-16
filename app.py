@@ -3,17 +3,12 @@ from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
 from security import authentication, identity
 
-#from resource.Item import Item
-#from resource.Items import Items
-
 
 app = Flask(__name__)
 app.secret_key = "Devashish29101993"
 api = Api(app)
 
 jwt = JWT(app, authentication, identity)    # /auth
-
-items = []
 
 
 class Item(Resource):

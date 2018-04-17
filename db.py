@@ -10,11 +10,12 @@ class DB:
         conn = sqlite3.connect(database_path)
         cur = conn.cursor()
         users = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)"
-        tables = [users]
+        items = "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, product_name TEXT, price REAL)"
+        tables = [users, items]
         try:
             for table in tables:
                 cur.execute(table)
-            conn.commit()
+                conn.commit()
         except Exception as ex:
             print(ex.args)
         finally:

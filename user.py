@@ -4,7 +4,9 @@ from flask import request
 
 db = DB()
 
+
 class User:
+
     def __init__(self,  _id, username, password):
         self.id = _id
         self.username = username
@@ -24,19 +26,20 @@ class User:
         return user
 
     @classmethod
-    def find_by_id(cls, id):
+    def find_by_id(cls, _id):
 
-        qry = f"SELECT * FROM users WHERE id={int(id)}"
+        qry = f"SELECT * FROM users WHERE id={int(_id)}"
         user_list = db.Execute(qry)
 
         if len(user_list) > 0:
             user = cls(user_list[0][0], user_list[0][1], user_list[0][2])
         else:
             user = None
-
         return user
 
+
 class UserRegister(Resource):
+
     @staticmethod
     def post():
         """
@@ -55,16 +58,13 @@ class UserRegister(Resource):
             return {"error:": "User Already Exist!"}, 409
         else:
             insert_qry = f"INSERT INTO users VALUES (NULL, '{_username}', '{_password}')"
-            print(insert_qry)
             db.ExecuteNonQuery(insert_qry)
-            return {"message:": "User Inserted Successfully!"}
+            return {"message:": "User Inserted Successfully!"}, 201
 
     @staticmethod
     def get():
         select_qry = f"SELECT * FROM users"
         result = db.Execute(select_qry)
-        print(result)
-
-        return {"users:": result}
+        return {"users:": result}, 200
 
 

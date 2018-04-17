@@ -1,4 +1,4 @@
-from db import DB
+from Database.db import DB
 from flask_restful import Resource
 from flask import request
 

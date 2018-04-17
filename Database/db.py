@@ -1,6 +1,6 @@
 import sqlite3
 
-database_path = "data.db"
+database_path = "./Database/data.db"
 
 class DB:
     def __init__(self):

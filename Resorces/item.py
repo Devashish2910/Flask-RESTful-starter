@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
-from db import DB
+from Database.db import DB
 
 db = DB()
 

@@ -2,18 +2,12 @@ from flask import request
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 from Database.db import DB
+from Models.item import ItemModel
 
 db = DB()
 
 
 class Item(Resource):
-    @classmethod
-    def find_by_name(cls, name):
-        select_qry = f"SELECT * FROM items WHERE product_name='{name}'"
-        selected_item = db.Execute(select_qry)
-
-        return selected_item
-
     @jwt_required()
     def post(self):
         # use of request parser to validate the request body
@@ -25,7 +19,7 @@ class Item(Resource):
         price = float(data['product_price'])
         name = str(data['product_name'])
 
-        is_exist = self.find_by_name(name)
+        is_exist = ItemModel.find_by_name(name)
 
         if len(is_exist) > 0:
             return {"message": "Product Already Exist!"}, 409
@@ -45,7 +39,7 @@ class Item(Resource):
         # use request to get request body
         request_data = request.get_json()
 
-        is_exist = self.find_by_name(name)
+        is_exist = ItemModel.find_by_name(name)
 
         if len(is_exist) > 0:
             update_query = f"UPDATE items SET price = {float(request_data['product_price'])} WHERE product_name='{name}'"
@@ -57,7 +51,7 @@ class Item(Resource):
     @jwt_required()
     def get(self, name):
         # use params from the end point
-        selected_item = self.find_by_name(name)
+        selected_item = ItemModel.find_by_name(name)
 
         if len(selected_item) > 0:
             return {"item": {"name": selected_item[0][1], "price": selected_item[0][2]}}, 200
@@ -69,7 +63,7 @@ class Item(Resource):
         data = request.args
         name = str(data['name'])
 
-        selected_product = self.find_by_name(name)
+        selected_product = ItemModel.find_by_name(name)
 
         if len(selected_product) > 0:
             delete_query = f"DELETE FROM items WHERE product_name='{name}'"

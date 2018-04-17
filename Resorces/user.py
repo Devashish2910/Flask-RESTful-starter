@@ -1,41 +1,9 @@
 from Database.db import DB
 from flask_restful import Resource, reqparse
 from flask import request
+from Models.user import UserModel
 
 db = DB()
-
-
-class User:
-
-    def __init__(self,  _id, username, password):
-        self.id = _id
-        self.username = username
-        self.password = password
-
-    @classmethod
-    def find_by_username(cls, username):
-
-        qry = f"SELECT * FROM users WHERE username='{username}'"
-        user_list = db.Execute(qry)
-
-        if len(user_list) > 0:
-            user = cls(user_list[0][0], user_list[0][1], user_list[0][2])
-        else:
-            user = None
-
-        return user
-
-    @classmethod
-    def find_by_id(cls, _id):
-
-        qry = f"SELECT * FROM users WHERE id={int(_id)}"
-        user_list = db.Execute(qry)
-
-        if len(user_list) > 0:
-            user = cls(user_list[0][0], user_list[0][1], user_list[0][2])
-        else:
-            user = None
-        return user
 
 
 class UserRegister(Resource):
@@ -55,7 +23,7 @@ class UserRegister(Resource):
         _username = data['username']
         _password = str(data['password'])
 
-        check_exist = User.find_by_username(_username)
+        check_exist = UserModel.find_by_username(_username)
 
         if check_exist != None:
             return {"error:": "User Already Exist!"}, 409

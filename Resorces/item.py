@@ -16,7 +16,12 @@ class Item(Resource):
 
     @jwt_required()
     def post(self):
-        data = request.get_json()
+        # use of request parser to validate the request body
+        parser = reqparse.RequestParser()
+        parser.add_argument('product_price', type=float, required=True, help="Product Price couldn't be blank")
+        parser.add_argument('product_name', type=str, required=True, help="Product Name couldn't be blank")
+        data = parser.parse_args()
+
         price = float(data['product_price'])
         name = str(data['product_name'])
 
@@ -32,10 +37,13 @@ class Item(Resource):
 
     @jwt_required()
     def put(self, name):
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('product_price', type=float, required=True, help="This field couldn't be blank")
         request_data = parser.parse_args()
-
+        """
+        # use request to get request body
+        request_data = request.get_json()
 
         is_exist = self.find_by_name(name)
 
@@ -48,6 +56,7 @@ class Item(Resource):
 
     @jwt_required()
     def get(self, name):
+        # use params from the end point
         selected_item = self.find_by_name(name)
 
         if len(selected_item) > 0:
@@ -56,8 +65,10 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self):
-        data = request.get_json()
-        name = data['product_name']
+        # use query params
+        data = request.args
+        name = str(data['name'])
+
         selected_product = self.find_by_name(name)
 
         if len(selected_product) > 0:

@@ -29,7 +29,7 @@ app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
 api = Api(app)
 api.add_resource(Item, '/item', '/item/<string:name>')
 api.add_resource(Items, '/items')
-api.add_resource(UserRegister, '/sign_up', '/all_users')
+api.add_resource(UserRegister, '/signup', '/user')
 
 
 if __name__ == '__main__':

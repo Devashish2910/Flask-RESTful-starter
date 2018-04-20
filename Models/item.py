@@ -1,15 +1,39 @@
-from Database.db import DB
-db = DB()
+from Database.db import db
 
 
-class ItemModel:
+class ItemModel(db.Model):
+    __tablename__ = "items"
+
+    id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.String(100))
+    product_price = db.Column(db.Float(precision=2))
+
     def __init__(self, name, price):
-        self.name = name
-        self.price = price
+        self.product_name = name
+        self.product_price = price
 
     @classmethod
     def find_by_name(cls, name):
-        select_qry = f"SELECT * FROM items WHERE product_name='{name}'"
-        selected_item = db.Execute(select_qry)
+        return cls.query.filter_by(product_name=name).first()
 
-        return selected_item
+    @classmethod
+    def find_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
+
+    def json(self):
+        return {"name": self.product_name, "price": self.product_price}
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        pass
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()

@@ -9,10 +9,12 @@ from Resorces.item import Item, Items
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database/data.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
 app.secret_key = "Devashish29101993"
-
 # default url for authentication is /auth, to change it
 app.config['JWT_AUTH_URL_RULE'] = '/login'
+
 
 jwt = JWT(app, authentication, identity_function)
 
@@ -27,10 +29,17 @@ def customized_response_handler(access_token, identity):
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
 
 api = Api(app)
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
 api.add_resource(Item, '/item', '/item/<string:name>')
 api.add_resource(Items, '/items')
 api.add_resource(UserRegister, '/signup', '/user')
 
 
 if __name__ == '__main__':
+    from Database.db import db
+    db.init_app(app)
     app.run(port=3000, debug=True)

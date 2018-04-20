@@ -1,10 +1,7 @@
 from flask import request
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
-from Database.db import DB
 from Models.item import ItemModel
-
-db = DB()
 
 
 class Item(Resource):
@@ -16,18 +13,17 @@ class Item(Resource):
         parser.add_argument('product_name', type=str, required=True, help="Product Name couldn't be blank")
         data = parser.parse_args()
 
-        price = float(data['product_price'])
-        name = str(data['product_name'])
+        price = data['product_price']
+        name = data['product_name']
 
-        is_exist = ItemModel.find_by_name(name)
+        exist = ItemModel.find_by_name(name)
 
-        if len(is_exist) > 0:
+        if exist:
             return {"message": "Product Already Exist!"}, 409
 
-        insert_qry = f"INSERT INTO items VALUES (NULL, '{name}', {price})"
-        db.ExecuteNonQuery(insert_qry)
-
-        return {"message": "Inserted Successfully!"}, 201
+        item = ItemModel(name, price)
+        item.save_to_db()
+        return item.json(), 201
 
     @jwt_required()
     def put(self, name):
@@ -39,13 +35,12 @@ class Item(Resource):
         # use request to get request body
         request_data = request.get_json()
 
-        is_exist = ItemModel.find_by_name(name)
+        item = ItemModel.find_by_name(name)
 
-        if len(is_exist) > 0:
-            update_query = f"UPDATE items SET price = {float(request_data['product_price'])} WHERE product_name='{name}'"
-            print(update_query)
-            db.ExecuteNonQuery(update_query)
-            return {"message": "Product Updated Successfully!"}, 200
+        if item:
+            item.product_price = float(request_data['product_price'])
+            item.save_to_db()
+            return item.json(), 201
         return {"message": "No Data Found!"}, 404
 
     @jwt_required()
@@ -53,8 +48,8 @@ class Item(Resource):
         # use params from the end point
         selected_item = ItemModel.find_by_name(name)
 
-        if len(selected_item) > 0:
-            return {"item": {"name": selected_item[0][1], "price": selected_item[0][2]}}, 200
+        if selected_item:
+            return selected_item.json(), 200
         return {"message": "No Item Found!"}, 404
 
     @jwt_required()
@@ -65,10 +60,8 @@ class Item(Resource):
 
         selected_product = ItemModel.find_by_name(name)
 
-        if len(selected_product) > 0:
-            delete_query = f"DELETE FROM items WHERE product_name='{name}'"
-            print(delete_query)
-            db.ExecuteNonQuery(delete_query)
+        if selected_product:
+            selected_product.delete()
             return {"message": "Product Removed!"}, 200
         return {"message": "No Product Found!"}, 404
 
@@ -77,11 +70,10 @@ class Items(Resource):
 
     @jwt_required()
     def get(self):
-        select_qry = f"SELECT * FROM items"
-        all_items = db.Execute(select_qry)
-        all_items = [{item[1]: item[2]} for item in all_items]
+        items = ItemModel.find_all()
 
-        if all_items is not None:
-            return {"items": all_items}, 200
+        if items:
+            #return {"users": [item.json() for item in items]}, 200
+            return {"users": list(map(lambda x: x.json(), items))}
         else:
             return {"message": "Sorry, No Items Found!"}, 404

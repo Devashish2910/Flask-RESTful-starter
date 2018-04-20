@@ -1,35 +1,32 @@
-from Database.db import DB
-db = DB()
+from Database.db import db
 
 
-class UserModel:
+class UserModel(db.Model):
+    __tablename__= "users"
 
-    def __init__(self,  _id, username, password):
-        self.id = _id
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    password = db.Column(db.String(80))
+
+    def __init__(self, username, password):
         self.username = username
         self.password = password
 
     @classmethod
     def find_by_username(cls, username):
-
-        qry = f"SELECT * FROM users WHERE username='{username}'"
-        user_list = db.Execute(qry)
-
-        if len(user_list) > 0:
-            user = cls(user_list[0][0], user_list[0][1], user_list[0][2])
-        else:
-            user = None
-
-        return user
+        return cls.query.filter_by(username=username).first()
 
     @classmethod
     def find_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
 
-        qry = f"SELECT * FROM users WHERE id={int(_id)}"
-        user_list = db.Execute(qry)
+    def json(self):
+        return {"Username": self.username, "Password": self.password}
 
-        if len(user_list) > 0:
-            user = cls(user_list[0][0], user_list[0][1], user_list[0][2])
-        else:
-            user = None
-        return user
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()

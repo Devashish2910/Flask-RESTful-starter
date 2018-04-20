@@ -11,17 +11,19 @@ class Item(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('product_price', type=float, required=True, help="Product Price couldn't be blank")
         parser.add_argument('product_name', type=str, required=True, help="Product Name couldn't be blank")
+        parser.add_argument('store_id', type=int, required=True, help="Store Id couldn't be blank")
         data = parser.parse_args()
 
         price = data['product_price']
         name = data['product_name']
+        store_id = data['store_id']
 
         exist = ItemModel.find_by_name(name)
 
         if exist:
             return {"message": "Product Already Exist!"}, 409
 
-        item = ItemModel(name, price)
+        item = ItemModel(name, price, store_id)
         item.save_to_db()
         return item.json(), 201
 
@@ -67,7 +69,6 @@ class Item(Resource):
 
 
 class Items(Resource):
-
     @jwt_required()
     def get(self):
         items = ItemModel.find_all()

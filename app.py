@@ -6,6 +6,7 @@ from datetime import timedelta
 from Security.security import authentication, identity as identity_function
 from Resorces.user import UserRegister
 from Resorces.item import Item, Items
+from Resorces.store import Store, StoreList
 
 
 app = Flask(__name__)
@@ -34,10 +35,12 @@ api = Api(app)
 def create_tables():
     db.create_all()
 
+
 api.add_resource(Item, '/item', '/item/<string:name>')
 api.add_resource(Items, '/items')
 api.add_resource(UserRegister, '/signup', '/user')
-
+api.add_resource(Store, '/store', '/store/<string:name>')
+api.add_resource(StoreList, '/stores')
 
 if __name__ == '__main__':
     from Database.db import db

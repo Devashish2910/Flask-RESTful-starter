@@ -31,9 +31,11 @@ app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
 
 api = Api(app)
 
+"""
 @app.before_first_request
 def create_tables():
     db.create_all()
+"""
 
 
 api.add_resource(Item, '/item', '/item/<string:name>')
@@ -44,5 +46,6 @@ api.add_resource(StoreList, '/stores')
 
 if __name__ == '__main__':
     from Database.db import db
+
     db.init_app(app)
     app.run(port=3000, debug=True)

@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt import JWT
@@ -10,7 +12,7 @@ from Resorces.store import Store, StoreList
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database/data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///Database/data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
 app.secret_key = "Devashish29101993"
 # default url for authentication is /auth, to change it

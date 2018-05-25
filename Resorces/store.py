@@ -10,7 +10,6 @@ class Store(Resource):
         """
         Create a new Store
         POST /store
-        :return: store details
         """
         parser = reqparse.RequestParser()
         parser.add_argument('store_name', type=str, required=True, help="Store Name couldn't be blank")
@@ -33,11 +32,6 @@ class Store(Resource):
         """
         Find a store by name
         GET /store/<string:name>
-
-        :param name: store_name
-        :type name: string
-        :return: store details
-        :rtype: json
         """
         exist = StoreModel.find_by_name(name)
 
@@ -51,8 +45,6 @@ class Store(Resource):
         """
         Delete a store
         DELETE /store?store_name=<string:name>
-        :return: Deletion message
-        :rtype: String
         """
         data = request.args
         store_name = data['store_name']
@@ -71,8 +63,6 @@ class StoreList(Resource):
         """
         Get all Store details
         GET /stores
-        :return: Stores' list
-        :rtype: json
         """
         stores = StoreModel.find_all()
 

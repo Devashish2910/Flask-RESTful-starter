@@ -9,8 +9,6 @@ class UserRegister(Resource):
         """
         POST /signup
         Method for Creating a new User
-        :return: new created user notification
-        :rtype: json
         """
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True, help="*username required")
@@ -34,8 +32,6 @@ class UserRegister(Resource):
         """
         GET /user?username=<string:name>
         Method for getting user details
-        :return: user details
-        :rtype: json
         """
         data = request.args
         _username = str(data['username'])

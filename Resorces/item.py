@@ -7,6 +7,10 @@ from Models.item import ItemModel
 class Item(Resource):
     @jwt_required()
     def post(self):
+        """
+        Add new item
+        POST /item
+        """
         # use of request parser to validate the request body
         parser = reqparse.RequestParser()
         parser.add_argument('product_price', type=float, required=True, help="Product Price couldn't be blank")
@@ -30,6 +34,9 @@ class Item(Resource):
     @jwt_required()
     def put(self, name):
         """
+        Update item price
+        PUT /item/<string:name>
+
         parser = reqparse.RequestParser()
         parser.add_argument('product_price', type=float, required=True, help="This field couldn't be blank")
         request_data = parser.parse_args()
@@ -47,6 +54,10 @@ class Item(Resource):
 
     @jwt_required()
     def get(self, name):
+        """
+        Get item details
+        GET /item/<string:name>
+        """
         # use params from the end point
         selected_item = ItemModel.find_by_name(name)
 
@@ -56,6 +67,10 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self):
+        """
+        Delete Item
+        DELETE /item?name=<string:item_name>
+        """
         # use query params
         data = request.args
         name = str(data['name'])
@@ -71,6 +86,10 @@ class Item(Resource):
 class Items(Resource):
     @jwt_required()
     def get(self):
+        """
+        Get all items
+        GET /items
+        """
         items = ItemModel.find_all()
 
         if items:

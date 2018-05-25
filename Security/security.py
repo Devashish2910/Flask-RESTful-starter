@@ -8,7 +8,6 @@ def authentication(username, password):
 
 
 def identity(payload):
-    print(payload)
     user_id = payload['identity']
     return UserModel.find_by_id(user_id)
 

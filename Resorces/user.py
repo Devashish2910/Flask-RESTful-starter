@@ -7,9 +7,10 @@ class UserRegister(Resource):
     @staticmethod
     def post():
         """
+        POST /signup
         Method for Creating a new User
         :return: new created user notification
-        :rtype: dictionary
+        :rtype: json
         """
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True, help="*username required")
@@ -30,6 +31,12 @@ class UserRegister(Resource):
 
     @staticmethod
     def get():
+        """
+        GET /user?username=<string:name>
+        Method for getting user details
+        :return: user details
+        :rtype: json
+        """
         data = request.args
         _username = str(data['username'])
 

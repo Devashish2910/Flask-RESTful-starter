@@ -4,8 +4,14 @@ from flask import request
 from flask_jwt import jwt_required
 
 class Store(Resource):
+
     @jwt_required()
     def post(self):
+        """
+        Create a new Store
+        POST /store
+        :return: store details
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('store_name', type=str, required=True, help="Store Name couldn't be blank")
         data = parser.parse_args()
@@ -24,6 +30,15 @@ class Store(Resource):
 
     @jwt_required()
     def get(self, name):
+        """
+        Find a store by name
+        GET /store/<string:name>
+
+        :param name: store_name
+        :type name: string
+        :return: store details
+        :rtype: json
+        """
         exist = StoreModel.find_by_name(name)
 
         if not exist:
@@ -33,6 +48,12 @@ class Store(Resource):
 
     @jwt_required()
     def delete(self):
+        """
+        Delete a store
+        DELETE /store?store_name=<string:name>
+        :return: Deletion message
+        :rtype: String
+        """
         data = request.args
         store_name = data['store_name']
 
@@ -45,7 +66,14 @@ class Store(Resource):
         return {"message", "Store don't exist!"}, 404
 
 class StoreList(Resource):
+
     def get(self):
+        """
+        Get all Store details
+        GET /stores
+        :return: Stores' list
+        :rtype: json
+        """
         stores = StoreModel.find_all()
 
         if stores:
